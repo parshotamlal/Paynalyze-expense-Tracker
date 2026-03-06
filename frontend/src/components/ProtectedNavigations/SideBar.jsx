@@ -24,8 +24,8 @@ const SideBar = () => {
 
   return (
     <nav className="hidden xl:flex flex-col w-[15%] h-full border-r-1 border-secondary py-3">
-      <div className="px-4 flex items-center gap-x-2">
-        <img src={logo} alt="Paynalyze logo" className="w-[2.5rem]" />
+      <div className="px-1 flex items-center gap-x-2">
+        <img src={logo} alt="Paynalyze logo" className="w-[10rem]" />
         <h5 className="text-xl font-outfit">
          
         </h5>
@@ -64,6 +64,30 @@ const SideBar = () => {
           >
             <Expense className="size-[1.5rem]" />
             Expenses
+          </li>
+
+             <li
+            className={`link ${
+              isRouteActive("/dashboard/investments") ? "activeLink" : ""
+            }`}
+            onClick={() => {
+              navigate("/dashboard/investments");
+            }}
+          >
+            <Expense className="size-[1.5rem]" />
+            Investment
+          </li>
+
+             <li
+            className={`link ${
+              isRouteActive("/dashboard/investmentgraph") ? "activeLink" : ""
+            }`}
+            onClick={() => {
+              navigate("/dashboard/investmentgraph");
+            }}
+          >
+            <Expense className="size-[1.5rem]" />
+            Investmentgraph
           </li>
         </div>
         <li

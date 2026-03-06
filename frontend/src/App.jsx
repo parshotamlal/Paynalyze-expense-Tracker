@@ -16,6 +16,8 @@ import {
   Settings,
 } from "./pages";
 import { PublicRoutes, ProtectedRoutes } from "./components/Guards";
+import Investment from "./pages/ProtectedPages/Investment";
+import InvestmentGraph from "./pages/ProtectedPages/Investmentgraph";
 
 const App = () => {
   return (
@@ -41,6 +43,8 @@ const App = () => {
             <Route path="/dashboard/incomes" element={<Incomes />} />
             <Route path="/dashboard/expenses" element={<Expenses />} />
             <Route path="/dashboard/settings" element={<Settings />} />
+            <Route path="/dashboard/investments" element={<Investment />} />
+            <Route path="/dashboard/investmentgraph" element={<InvestmentGraph/>} />
           </Route>
         </Route>
 
