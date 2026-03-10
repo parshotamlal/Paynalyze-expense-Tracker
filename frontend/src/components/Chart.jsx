@@ -24,6 +24,7 @@ const Chart = ({ data }) => {
         <Legend align="center" verticalAlign="top" />
         <Line type="monotone" dataKey="income" stroke="#82ca9d" />
         <Line type="monotone" dataKey="expense" stroke="#8884d8" />
+        <Line type="monotone" dataKey="investment" stroke="#8884d8" />
       </LineChart>
     </ResponsiveContainer>
   );

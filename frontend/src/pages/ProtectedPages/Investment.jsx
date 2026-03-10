@@ -6,26 +6,22 @@ import { parseDate } from "@internationalized/date";
 import { NumericFormat } from "react-number-format";
 
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useGetIncomeQuery,
-  useAddIncomeMutation,
-} from "../../features/api/apiSlices/incomeApiSlice";
 import { updateLoader } from "../../features/loader/loaderSlice";
 
 import { TransactionForm } from "../../components/Forms";
 import validateForm from "../../utils/validateForm";
 import TransactionTable from "../../components/Tables/TransactionTable";
+import { useAddInvestmentMutation, useGetInvestmentQuery } from "../../features/api/apiSlices/investmentApiSlice";
 
 const Investment = () => {
   const [formData, setFormData] = useState({
     title: "",
     amount: "",
-    description: "",
     category: "",
     date: parseDate(moment().format("YYYY-MM-DD")),
   });
   const [errors, setErrors] = useState({});
-  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalInvestment, setTotalInvestment] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const isRefetchDeleteModal = useSelector(
@@ -35,7 +31,7 @@ const Investment = () => {
     (state) => state.transactionViewAndUpdateModal.refetch
   );
 
-  const incomeCategories = [
+  const investmentCategories = [
     { label: "Reliance Industries", value: "reliance" },
   { label: "Tata Motors", value: "tata_motors" },
   { label: "TCS", value: "tcs" },
@@ -56,10 +52,6 @@ const Investment = () => {
     amount: number("Amount must be a number")
       .required("Amount is required.")
       .positive("Amount must be positive."),
-    description: string()
-      .required("Description is required.")
-      .min(5, "Description must be atleast 5 characters long.")
-      .max(80, "Description should not be more than 80 characters."),
     date: date().required("Date is required."),
     category: string()
       .required("Category is required.")
@@ -99,12 +91,12 @@ const Investment = () => {
     setFormData({ ...formData, date: newDate });
   };
 
-  const [addIncome, { isLoading: addIncomeLoading }] = useAddIncomeMutation();
+  const [addInvestment, { isLoading: addInvestmentLoading }] = useAddInvestmentMutation();
   const {
     data,
-    isLoading: getIncomeLoading,
+    isLoading: getInvestmentLoading,
     refetch,
-  } = useGetIncomeQuery({
+  } = useGetInvestmentQuery({
     page: currentPage,
     pageSize: 10,
   });
@@ -113,8 +105,8 @@ const Investment = () => {
   const fetchData = async () => {
     try {
       await refetch();
-      if (data?.incomes) {
-        setTotalIncome(data.totalIncome || 0);
+      if (data?.investments) {
+        setTotalInvestment(data.totalInvestment || 0);
         setTotalPages(data.pagination.totalPages || 1);
       }
     } catch (error) {
@@ -139,7 +131,7 @@ const Investment = () => {
         date: formattedDate,
       };
 
-      const res = await addIncome(updatedFormData).unwrap();
+      const res = await addInvestment(updatedFormData).unwrap();
 
       dispatch(updateLoader(60));
       toast.success(res.message || "Income added successfully!");
@@ -167,7 +159,7 @@ const Investment = () => {
           $
           <NumericFormat
             className="ml-1 text-2xl lg:text-4xl"
-            value={totalIncome}
+            value={totalInvestment}
             displayType={"text"}
             thousandSeparator={true}
           />
@@ -175,23 +167,23 @@ const Investment = () => {
       </h3>
       <section className="w-full h-full flex flex-col lg:flex-row px-6 md:px-8 lg:px-12 pt-6 space-y-8 lg:space-y-0 lg:space-x-8">
         <TransactionForm
-          button="Add Income"
-          categories={incomeCategories}
+          button="Add Investment"
+          categories={investmentCategories}
           btnColor="success"
           formData={formData}
           errors={errors}
           hasErrors={hasErrors}
-          isLoading={addIncomeLoading}
+          isLoading={addInvestmentLoading}
           handleOnChange={handleOnChange}
           handleDateChange={handleDateChange}
           handleSubmit={handleSubmit}
         />
         <TransactionTable
-          data={data?.incomes}
-          name="income"
+          data={data?.investments}
+          name="investment"
           chipColorMap={chipColorMap}
           rowsPerPage={10}
-          isLoading={getIncomeLoading}
+          isLoading={getInvestmentLoading}
           totalPages={totalPages}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
