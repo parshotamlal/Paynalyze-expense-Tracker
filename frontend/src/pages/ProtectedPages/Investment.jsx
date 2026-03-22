@@ -134,7 +134,7 @@ const Investment = () => {
       const res = await addInvestment(updatedFormData).unwrap();
 
       dispatch(updateLoader(60));
-      toast.success(res.message || "Income added successfully!");
+      toast.success(res.message || "Investment added successfully!");
     } catch (error) {
       console.log(error);
       toast.error(error?.data?.error || "Unexpected Internal Server Error!");

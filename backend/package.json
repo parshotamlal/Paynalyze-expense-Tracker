@@ -18,7 +18,7 @@
   "description": "Paynalyze is a user-friendly platform designed to streamline your financial management effortlessly. With Paynalyze, you can easily track expenses, manage income, and stay on top of your finances effortlessly. Easily add transactions, and navigate your dashboard with ease. Take control of your finances with Paynalyze.",
   "type": "module",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

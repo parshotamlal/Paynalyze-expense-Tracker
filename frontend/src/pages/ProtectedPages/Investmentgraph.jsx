@@ -26,6 +26,7 @@ async function fetchYahooQuote(symbol) {
   const res = await fetch(proxyUrl);
   const json = await res.json();
 
+  console.log(meta)
   const meta = json?.chart?.result?.[0]?.meta;
   const closes = json?.chart?.result?.[0]?.indicators?.quote?.[0]?.close;
 
