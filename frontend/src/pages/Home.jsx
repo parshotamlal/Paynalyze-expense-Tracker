@@ -19,6 +19,7 @@ const Home = () => {
     }
   }, [userIsVerified]);
 
+  
   return (
     <main className={`${userIsVerified ? "hidden" : ""} w-full h-full`}>
       <NavBar />

@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
       "/api/v1": {
-        target: "http://localhost:3000",
+        target: "https://paynalyze-expense-tracker.onrender.com",
         changeOrigin: true,
       },
     },
