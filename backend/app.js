@@ -27,7 +27,7 @@ app.use(cookieParser());
 // ✅ Fixed CORS configuration
 app.use(
   cors({
-    origin: true, // allows any origin in development
+    origin: "https://paynalyze-expense-tracker.vercel.app/",  //true
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
