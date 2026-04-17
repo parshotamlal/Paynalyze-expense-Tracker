@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import moment from "moment";
 import { parseDate } from "@internationalized/date";
 import { NumericFormat } from "react-number-format";
-
 import { useDispatch, useSelector } from "react-redux";
 import {
   useGetExpenseQuery,
@@ -15,6 +14,7 @@ import { updateLoader } from "../../features/loader/loaderSlice";
 import { TransactionForm } from "../../components/Forms";
 import validateForm from "../../utils/validateForm";
 import TransactionTable from "../../components/Tables/TransactionTable";
+import * as XLSX from "xlsx";
 
 const Expenses = () => {
   const [formData, setFormData] = useState({
@@ -34,6 +34,7 @@ const Expenses = () => {
   const isRefetchViewAndUpdateModal = useSelector(
     (state) => state.transactionViewAndUpdateModal.refetch
   );
+
 
   const expenseCategories = [
     { label: "Groceries", value: "groceries" },
@@ -159,22 +160,34 @@ const Expenses = () => {
 
   const hasErrors = Object.values(errors).some((error) => !!error);
 
+  const handleDownloadExcel = () => {
+    if (!data?.expenses?.length) {
+      toast.info("No expense records available to download.");
+      return;
+    }
+
+    const worksheetData = data.expenses.map((expense) => ({
+      Title: expense.title,
+      Amount: expense.amount,
+      Description: expense.description,
+      Category: expense.category,
+      Date: moment(expense.date).format("YYYY-MM-DD"),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
+    XLSX.writeFile(
+      workbook,
+      `expenses-${moment().format("YYYYMMDD-HHmmss")}.xlsx`
+    );
+  };
+
   return (
     <>
-      <h3 className="text-3xl lg:text-5xl mt-4 text-center">
-        Total Expense -{" "}
-        <span className="text-red-400">
-          $
-          <NumericFormat
-            className="ml-1 text-2xl lg:text-4xl"
-            value={totalExpense}
-            displayType={"text"}
-            thousandSeparator={true}
-          />
-        </span>
-      </h3>
-      <section className="w-full h-full flex flex-col lg:flex-row px-6 md:px-8 lg:px-12 pt-6 space-y-8 lg:space-y-0 lg:space-x-8">
-        <TransactionForm
+    <section className="w-full h-full flex flex-col lg:flex-row px-6 md:px-8 lg:px-12 pt-6 space-y-8 lg:space-y-0 lg:space-x-8">
+        
+       <TransactionForm
           button="Add Expense"
           categories={expenseCategories}
           btnColor="danger"
@@ -186,7 +199,38 @@ const Expenses = () => {
           handleDateChange={handleDateChange}
           handleSubmit={handleSubmit}
         />
-        <TransactionTable
+<div className="flex flex-col max-w-[600px] mx-auto w-full">
+
+  {/* Header Section */}
+  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+
+    <h3 className="text-2xl sm:text-3xl lg:text-5xl text-center sm:text-left">
+       Total Expense -{" "}
+      <span className="text-emerald-400 inline-flex items-center">
+        $
+        <NumericFormat
+           className="ml-1 text-2xl lg:text-4xl"
+            value={totalExpense}
+            displayType={"text"}
+            thousandSeparator={true}
+        />
+      </span>
+    </h3>
+
+    <button
+      type="button"
+      onClick={handleDownloadExcel}
+      disabled={getExpenseLoading}
+      className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded px-3 py-2 w-full sm:w-auto"
+    >
+      Download Excel
+    </button>
+
+  </div>
+
+  {/* Table */}
+  <div className="mt-6 min-h-[560px] overflow-auto">
+     <TransactionTable
           data={data?.expenses}
           name="expense"
           rowsPerPage={10}
@@ -196,7 +240,12 @@ const Expenses = () => {
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
+  </div>
+
+</div>
       </section>
+
+
     </>
   );
 };

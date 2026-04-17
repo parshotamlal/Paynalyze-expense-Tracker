@@ -98,10 +98,6 @@ const Home = () => {
         desc: "Your data is encrypted and fully protected.",
       },
       {
-        title: "Multi-device Sync",
-        desc: "Access your data anytime, anywhere.",
-      },
-      {
         title: "AI Insights",
         desc: "Smart suggestions to improve your savings.",
       },

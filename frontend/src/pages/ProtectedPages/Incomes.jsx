@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import moment from "moment";
 import { parseDate } from "@internationalized/date";
 import { NumericFormat } from "react-number-format";
+import * as XLSX from "xlsx";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -156,8 +157,36 @@ const Incomes = () => {
 
   const hasErrors = Object.values(errors).some((error) => !!error);
 
+    const handleDownloadExcel = () => {
+    if (!data?.incomes?.length) {
+      toast.info("No income records available to download.");
+      return;
+    }
+
+    const worksheetData = data.incomes.map((income) => ({
+      Title: income.title,
+      Amount: income.amount,
+      Description: income.description,
+      Category: income.category,
+      Date: moment(income.date).format("YYYY-MM-DD"),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Incomes");
+    XLSX.writeFile(
+      workbook,
+      `incomes-${moment().format("YYYYMMDD-HHmmss")}.xlsx`
+    );
+  };
+
   return (
     <>
+
+    {/* <div className=" flex justify-center ml-40">
+
+    <div className=" justify-center flex gap-40" >
+    
       <h3 className="text-3xl lg:text-5xl mt-4 text-center">
         Total Income -{" "}
         <span className="text-emerald-400">
@@ -170,7 +199,21 @@ const Incomes = () => {
           />
         </span>
       </h3>
+      
+      <div className="flex justify-end ">
+        <button
+          type="button"
+          onClick={handleDownloadExcel}
+          disabled={getIncomeLoading}
+          className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded px-4 py-2"
+        >
+          Download Excel
+        </button>
+      </div>
+      </div>
+      </div> */}
       <section className="w-full h-full flex flex-col lg:flex-row px-6 md:px-8 lg:px-12 pt-6 space-y-8 lg:space-y-0 lg:space-x-8">
+        
         <TransactionForm
           button="Add Income"
           categories={incomeCategories}
@@ -183,16 +226,51 @@ const Incomes = () => {
           handleDateChange={handleDateChange}
           handleSubmit={handleSubmit}
         />
-        <TransactionTable
-          data={data?.incomes}
-          name="income"
-          chipColorMap={chipColorMap}
-          rowsPerPage={10}
-          isLoading={getIncomeLoading}
-          totalPages={totalPages}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
+        
+<div className="flex flex-col max-w-[600px] mx-auto w-full">
+
+  {/* Header Section */}
+  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+
+    <h3 className="text-2xl sm:text-3xl lg:text-5xl text-center sm:text-left">
+      Total Income -{" "}
+      <span className="text-emerald-400 inline-flex items-center">
+        $
+        <NumericFormat
+          className="ml-1 text-xl sm:text-2xl lg:text-4xl"
+          value={totalIncome}
+          displayType={"text"}
+          thousandSeparator={true}
         />
+      </span>
+    </h3>
+
+    <button
+      type="button"
+      onClick={handleDownloadExcel}
+      disabled={getIncomeLoading}
+      className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded px-4 py-2 w-full sm:w-auto"
+    >
+      Download Excel
+    </button>
+
+  </div>
+
+  {/* Table */}
+  <div className="mt-6 min-h-[560px] overflow-auto">
+    <TransactionTable
+      data={data?.incomes}
+      name="income"
+      chipColorMap={chipColorMap}
+      rowsPerPage={10}
+      isLoading={getIncomeLoading}
+      totalPages={totalPages}
+      currentPage={currentPage}
+      setCurrentPage={setCurrentPage}
+    />
+  </div>
+
+</div>
       </section>
     </>
   );
